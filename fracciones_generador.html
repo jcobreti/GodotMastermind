@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador Interactivo de Fracciones - 1º ESO</title>
+    <!-- Cargamos Tailwind CSS para el diseño visual -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Pequeño ajuste para asegurar que la fuente principal sea agradable */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        /* Estilos personalizados para los deslizadores (sliders) */
+        input[type=range] {
+            accent-color: #2563eb; /* Azul Tailwind */
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        
+        <!-- Encabezado -->
+        <div class="bg-blue-600 text-white p-6 text-center">
+            <h1 class="text-3xl font-extrabold uppercase tracking-wider">Explorador de Fracciones</h1>
+            <p class="text-blue-100 mt-2">Descubre cómo funcionan las fracciones ajustando los valores</p>
+        </div>
+
+        <div class="p-6 md:p-10 flex flex-col md:flex-row gap-10">
+            
+            <!-- Panel de Controles -->
+            <div class="w-full md:w-1/3 bg-slate-50 p-6 rounded-xl border-2 border-slate-200 shadow-sm">
+                <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    Ajustes
+                </h2>
+
+                <!-- Control Numerador -->
+                <div class="mb-8">
+                    <label class="flex justify-between text-slate-700 font-bold mb-2">
+                        <span>Numerador (Partes coloreadas)</span>
+                    </label>
+                    <div class="flex items-center gap-4">
+                        <input type="range" id="num-slider" min="0" max="20" value="1" class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer">
+                        <input type="number" id="num-input" min="0" max="20" value="1" class="w-16 p-2 border-2 border-slate-300 rounded-lg text-center font-bold text-blue-600 focus:border-blue-600 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Control Denominador -->
+                <div class="mb-8">
+                    <label class="flex justify-between text-slate-700 font-bold mb-2">
+                        <span>Denominador (Partes totales)</span>
+                    </label>
+                    <div class="flex items-center gap-4">
+                        <input type="range" id="den-slider" min="1" max="20" value="4" class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer">
+                        <input type="number" id="den-input" min="1" max="20" value="4" class="w-16 p-2 border-2 border-slate-300 rounded-lg text-center font-bold text-blue-600 focus:border-blue-600 focus:outline-none">
+                    </div>
+                    <p class="text-xs text-red-500 mt-1 hidden" id="den-error">¡El denominador no puede ser cero!</p>
+                </div>
+
+                <!-- Selector de Forma -->
+                <div>
+                    <label class="block text-slate-700 font-bold mb-3">Forma del "Todo"</label>
+                    <div class="flex flex-col gap-3">
+                        <label class="flex items-center p-3 border-2 border-slate-200 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors shape-label">
+                            <input type="radio" name="shape" value="circle" checked class="w-5 h-5 text-blue-600">
+                            <span class="ml-3 font-semibold text-slate-700">Círculo (Pastel)</span>
+                        </label>
+                        <label class="flex items-center p-3 border-2 border-slate-200 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors shape-label">
+                            <input type="radio" name="shape" value="rect" class="w-5 h-5 text-blue-600">
+                            <span class="ml-3 font-semibold text-slate-700">Rectángulo (Barra de chocolate)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Visualización -->
+            <div class="w-full md:w-2/3 flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 relative min-h-[400px]">
+                
+                <!-- Fracción Numérica en grande -->
+                <div class="flex items-center justify-center mb-8">
+                    <span class="text-2xl text-slate-500 font-semibold mr-6">Fracción:</span>
+                    <div class="flex flex-col items-center justify-center font-black text-6xl text-slate-800">
+                        <div class="border-b-8 border-slate-800 px-4 pb-1" id="display-num">1</div>
+                        <div class="px-4 pt-1" id="display-den">4</div>
+                    </div>
+                </div>
+
+                <!-- Mensaje Educativo -->
+                <div id="fraction-type-msg" class="mb-8 px-4 py-2 rounded-full font-bold text-sm tracking-wide">
+                    Fracción Propia
+                </div>
+
+                <!-- Contenedor donde se dibujan los gráficos SVG -->
+                <div id="svg-container" class="flex flex-wrap items-center justify-center gap-6 w-full max-w-full">
+                    <!-- Los SVGs se generarán aquí con JavaScript -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Lógica de la Aplicación -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Referencias a elementos del DOM
+            const numSlider = document.getElementById('num-slider');
+            const numInput = document.getElementById('num-input');
+            const denSlider = document.getElementById('den-slider');
+            const denInput = document.getElementById('den-input');
+            const shapeRadios = document.getElementsByName('shape');
+            const svgContainer = document.getElementById('svg-container');
+            const displayNum = document.getElementById('display-num');
+            const displayDen = document.getElementById('display-den');
+            const fractionTypeMsg = document.getElementById('fraction-type-msg');
+            const denError = document.getElementById('den-error');
+
+            // Función principal para renderizar los gráficos
+            function updateVisuals() {
+                let num = parseInt(numInput.value) || 0;
+                let den = parseInt(denInput.value) || 1;
+
+                // Restricciones de seguridad
+                if (num < 0) num = 0;
+                if (den < 1) den = 1;
+
+                // Actualizar textos
+                displayNum.textContent = num;
+                displayDen.textContent = den;
+
+                // Determinar el tipo de fracción para el mensaje educativo
+                if (num === 0) {
+                    fractionTypeMsg.textContent = "Fracción Nula (Cero)";
+                    fractionTypeMsg.className = "mb-8 px-4 py-2 rounded-full font-bold text-sm bg-slate-200 text-slate-600";
+                } else if (num < den) {
+                    fractionTypeMsg.textContent = "Fracción Propia (Menor que la unidad)";
+                    fractionTypeMsg.className = "mb-8 px-4 py-2 rounded-full font-bold text-sm bg-green-100 text-green-700 border border-green-300";
+                } else if (num === den) {
+                    fractionTypeMsg.textContent = "Unidad Entera (Igual a 1)";
+                    fractionTypeMsg.className = "mb-8 px-4 py-2 rounded-full font-bold text-sm bg-blue-100 text-blue-700 border border-blue-300";
+                } else {
+                    fractionTypeMsg.textContent = "Fracción Impropia (Mayor que la unidad)";
+                    fractionTypeMsg.className = "mb-8 px-4 py-2 rounded-full font-bold text-sm bg-purple-100 text-purple-700 border border-purple-300";
+                }
+
+                // Obtener forma seleccionada
+                let shape = 'circle';
+                for (const radio of shapeRadios) {
+                    if (radio.checked) shape = radio.value;
+                }
+
+                // Generar HTML de los SVG
+                let svgHTML = '';
+                const wholesCount = Math.max(1, Math.ceil(num / den));
+                let shadedCount = 0;
+
+                const colorShaded = "#3b82f6"; // Azul Tailwind blue-500
+                const colorEmpty = "#e2e8f0";  // Gris Tailwind slate-200
+                const colorStroke = "#1e293b"; // Gris oscuro Tailwind slate-800
+
+                if (shape === 'circle') {
+                    const size = 140;
+                    const r = 65;
+                    const cx = 70;
+                    const cy = 70;
+
+                    for (let w = 0; w < wholesCount; w++) {
+                        svgHTML += `<svg width="${size}" height="${size}" class="drop-shadow-md">`;
+                        
+                        if (den === 1) {
+                            // Círculo completo si el denominador es 1
+                            const isShaded = shadedCount < num;
+                            const fill = isShaded ? colorShaded : colorEmpty;
+                            svgHTML += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${colorStroke}" stroke-width="2"/>`;
+                            shadedCount++;
+                        } else {
+                            // Dibujar los sectores (porciones de pastel)
+                            for (let i = 0; i < den; i++) {
+                                const isShaded = shadedCount < num;
+                                const fill = isShaded ? colorShaded : colorEmpty;
+                                
+                                const startAngle = (i * 2 * Math.PI) / den - Math.PI / 2;
+                                const endAngle = ((i + 1) * 2 * Math.PI) / den - Math.PI / 2;
+                                
+                                const x1 = cx + r * Math.cos(startAngle);
+                                const y1 = cy + r * Math.sin(startAngle);
+                                const x2 = cx + r * Math.cos(endAngle);
+                                const y2 = cy + r * Math.sin(endAngle);
+                                
+                                // Para denominadores >= 2, el ángulo siempre es <= 180 grados, así que largeArcFlag es 0
+                                const largeArcFlag = 0;
+                                
+                                const d = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+                                
+                                svgHTML += `<path d="${d}" fill="${fill}" stroke="${colorStroke}" stroke-width="1.5" stroke-linejoin="round"/>`;
+                                shadedCount++;
+                            }
+                        }
+                        svgHTML += `</svg>`;
+                    }
+                } else {
+                    // Forma de Rectángulo / Barra
+                    const wWidth = 240;
+                    const wHeight = 60;
+                    
+                    for (let w = 0; w < wholesCount; w++) {
+                        svgHTML += `<svg width="${wWidth}" height="${wHeight}" class="drop-shadow-md">`;
+                        const partWidth = wWidth / den;
+                        
+                        for (let i = 0; i < den; i++) {
+                            const isShaded = shadedCount < num;
+                            const fill = isShaded ? colorShaded : colorEmpty;
+                            
+                            svgHTML += `<rect x="${i * partWidth}" y="0" width="${partWidth}" height="${wHeight}" fill="${fill}" stroke="${colorStroke}" stroke-width="1.5"/>`;
+                            shadedCount++;
+                        }
+                        svgHTML += `</svg>`;
+                    }
+                }
+
+                // Inyectar el código generado
+                svgContainer.innerHTML = svgHTML;
+            }
+
+            // Sincronización de Numerador (Rango e Input numérico)
+            numSlider.addEventListener('input', (e) => {
+                numInput.value = e.target.value;
+                updateVisuals();
+            });
+            numInput.addEventListener('input', (e) => {
+                let val = parseInt(e.target.value);
+                if (val < 0) { val = 0; e.target.value = 0; }
+                if (val > 20) { val = 20; e.target.value = 20; }
+                numSlider.value = val || 0;
+                updateVisuals();
+            });
+
+            // Sincronización de Denominador (Rango e Input numérico)
+            denSlider.addEventListener('input', (e) => {
+                let val = parseInt(e.target.value);
+                if (val < 1) { val = 1; e.target.value = 1; }
+                denInput.value = val;
+                denError.classList.add('hidden');
+                updateVisuals();
+            });
+            denInput.addEventListener('input', (e) => {
+                let val = parseInt(e.target.value);
+                if (val <= 0 || isNaN(val)) { 
+                    denError.classList.remove('hidden');
+                    return; // No actualizar gráficos si es cero
+                }
+                denError.classList.add('hidden');
+                if (val > 20) { val = 20; e.target.value = 20; }
+                denSlider.value = val;
+                updateVisuals();
+            });
+
+            // Cambio de forma
+            shapeRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    // Estilo visual de la opción seleccionada
+                    document.querySelectorAll('.shape-label').forEach(lbl => lbl.classList.remove('border-blue-400', 'bg-blue-50'));
+                    if (radio.checked) {
+                        radio.parentElement.classList.add('border-blue-400', 'bg-blue-50');
+                    }
+                    updateVisuals();
+                });
+            });
+
+            // Primera ejecución para dibujar los gráficos por defecto (1/4 en círculo)
+            document.querySelectorAll('.shape-label')[0].classList.add('border-blue-400', 'bg-blue-50');
+            updateVisuals();
+        });
+    </script>
+</body>
+</html>
